@@ -11,10 +11,26 @@ public class player53 implements ContestSubmission
 	private ContestEvaluation evaluation;
 
 	private int evaluationsLimit;
+	
+	private static final int INDIVIDUAL_SIZE = 10;
+	private static final int POPULATION_SIZE = 100;
+	private individual population[];
 
 	public player53()
 	{
 		random = new Random();
+		population = new individual[POPULATION_SIZE];
+	}
+	
+	public void initPopulation() {
+		for (int i = 0; i < POPULATION_SIZE; i++) {
+		double[] newParams = new double[INDIVIDUAL_SIZE];
+			
+			for (int j = 0; j < INDIVIDUAL_SIZE; j++) {
+				newParams[j] = random.nextDouble() * 10 - 5;
+			}
+			population[i] = new individual(newParams);
+		}
 	}
 
 	public void setSeed(long seed)
@@ -50,12 +66,11 @@ public class player53 implements ContestSubmission
 	{
 		// Run your algorithm here
 		int evals = 0;
-
 		// init population
-
+		initPopulation();
 
 		// calculate fitness
-
+		
 
 		while(evals<evaluationsLimit){
 		    // Select parents
