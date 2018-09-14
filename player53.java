@@ -13,6 +13,14 @@ public class player53 implements ContestSubmission
 
 	private static final int POPULATION_SIZE = 100;
 
+
+	// The change that mutation happens for a genome.
+	private static final double MUTATION_PROBABILITY = 0.015;
+
+	// Mutation method can be: "SET_RANDOM_NUMBER", "ADD_RANDOM_NUMBER" "GAUSSIAN"
+	private static final String MUTATION_METHOD = "SET_RANDOM_NUMBER";
+
+
 	private static final int NUM_CHILDREN_GROUPS = 10;
 
 	private static final int NUM_CHILDREN_PER_GROUP = 2;
@@ -144,8 +152,34 @@ public class player53 implements ContestSubmission
 	private void mutateChildren(List<individual> children)
 	{
 		for (individual in : children) {
-			// Mutate the parameters
 
+			for (int i=0; i<in.getParams().length; i++) {
+
+				double rd = random.nextDouble();
+				if (rd > MUTATION_PROBABILITY) {
+					continue;
+				}
+
+				if (MUTATION_METHOD.equals("SET_RANDOM_NUMBER")) {
+					double mutatedParam = random.nextDouble() * 10 - 5;
+					in.updateParam(i, mutatedParam);
+				}
+
+				if (MUTATION_METHOD.equals("ADD_RANDOM_NUMBER")) {
+					double randomNumber = random.nextDouble() * 10;
+					double mutatedParam = in.getParams()[i] + randomNumber;
+					if (mutatedParam > 5) {
+						mutatedParam = -5 + (mutatedParam - 5);
+					}
+
+					in.updateParam(i, mutatedParam);
+				}
+
+				if (MUTATION_METHOD.equals("GAUSSIAN")) {
+					// TODO: implement Gaussian mutation: http://www.iue.tuwien.ac.at/phd/heitzinger/node27.html
+
+				}
+			}
 		}
 	}
 
@@ -154,8 +188,8 @@ public class player53 implements ContestSubmission
 	//
 	private void selectSurvivors()
 	{
-			// Our population is too big because of the children.
-			// Remove elements from the population list until we have the original POPULATION_SIZE again.
+		// Our population is too big because of the children.
+		// Remove elements from the population list until we have the original POPULATION_SIZE again.
 	}
 
 	public void run()

@@ -33,6 +33,12 @@ public class individual
 		this.params = params;
 	}
 
+	public void updateParam(int index, double newParam)
+	{
+		this.params[index] = newParam;
+	}
+
+
 	@Override
 	public String toString()
 	{
