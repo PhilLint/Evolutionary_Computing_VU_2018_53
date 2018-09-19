@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class individual
+public class individual implements Comparable<individual>
 {
 	// The fitness value of an individual.
 	private double fitness;
@@ -49,5 +49,11 @@ public class individual
 		}
 
 		return str + "}\n\t)";
+	}
+
+	@Override
+	public int compareTo(individual other)
+	{
+		return Double.compare(this.fitness, other.fitness);
 	}
 }

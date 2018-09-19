@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class player53 implements ContestSubmission
 {
@@ -21,7 +22,7 @@ public class player53 implements ContestSubmission
 	private static final String MUTATION_METHOD = "SET_RANDOM_NUMBER";
 
 
-	private static final int NUM_CHILDREN_GROUPS = 10;
+	private static final int NUM_CHILDREN_GROUPS = 3;
 
 	private static final int NUM_CHILDREN_PER_GROUP = 2;
 
@@ -126,9 +127,10 @@ public class player53 implements ContestSubmission
 	//
 	private List<individual> selectParents()
 	{
-		List<individual> parents = new ArrayList<individual>();
-
-		// Use some selection mechanism to select a number of parents and add them to this list.
+		Collections.sort(population);
+		List<individual> parents = new ArrayList<individual>(
+			population.subList(0,
+				NUM_CHILDREN_GROUPS * NUM_CHILDREN_PER_GROUP));
 
 		return parents;
 	}
