@@ -12,7 +12,7 @@ public class player53 implements ContestSubmission
 	// How many parameters an individual has.
 	private static final int INDIVIDUAL_SIZE = 10;
 
-	private static final int POPULATION_SIZE = 100;
+	private static final int POPULATION_SIZE = 10;
 
 
 	// The change that mutation happens for a genome.
@@ -25,6 +25,9 @@ public class player53 implements ContestSubmission
 	private static final int NUM_CHILDREN_GROUPS = 3;
 
 	private static final int NUM_CHILDREN_PER_GROUP = 2;
+
+	// Parent selection method can be: "FITNESS", "ROULETTE_WHEEL", etc.
+	private static final String PARENT_SELECTION_METHOD = "ROULETTE_WHEEL";
 
 
 	private Random random;
@@ -127,10 +130,51 @@ public class player53 implements ContestSubmission
 	//
 	private List<individual> selectParents()
 	{
-		Collections.sort(population);
-		List<individual> parents = new ArrayList<individual>(
-			population.subList(0,
-				NUM_CHILDREN_GROUPS * NUM_CHILDREN_PER_GROUP));
+		List<individual> parents = new ArrayList<individual>();
+		int numParents = NUM_CHILDREN_GROUPS * NUM_CHILDREN_PER_GROUP;
+		switch(PARENT_SELECTION_METHOD)
+		{
+			case "FITNESS":
+			{
+				System.out.println("Fitness Parent Selection");
+				// Sort population.
+				Collections.sort(population, Collections.reverseOrder());
+				// Select the best individuals to be parents.
+				parents.addAll(population.subList(0, numParents));
+			} break;
+			case "ROULETTE_WHEEL":
+			{
+				System.out.println("Roulette Wheel Parent Selection");
+				// Compute the sum of all fitnesses.
+				double sumFitness = 0.0;
+				for (individual in : population)
+				{
+					sumFitness += in.getFitness();
+				}
+				// For each candidate consider it has an interval the size of
+				// its fitness.
+				// Choose a random number between 0 and the sum of all fitnesses.
+				// Check in which interval the number falls and then select the
+				// respective individual to be a parent.
+				for (int i = 0; i < numParents; i++)
+				{
+					double rd = random.nextDouble() * sumFitness;
+					double partialSum = 0.0;
+					for (individual in : population)
+					{
+						partialSum += in.getFitness();
+						if (rd < partialSum)
+						{
+							parents.add(in);
+							break;
+						}
+					}
+
+				}
+			} break;
+			default: { }
+		}
+
 
 		return parents;
 	}
@@ -210,6 +254,11 @@ public class player53 implements ContestSubmission
 		while(evals < evaluationsLimit) {
 			// Step 3. Select parents
 			List<individual> parents = selectParents();
+			System.out.println("Parents(");
+			for (individual in : parents) {
+				System.out.println("\t" + in);
+			}
+			System.out.println(")");
 
 			// Step 4. Create children from parents using crossover.
 			List<individual> children = createChildrenFromParents(parents);
