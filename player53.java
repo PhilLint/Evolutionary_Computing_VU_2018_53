@@ -16,10 +16,12 @@ public class player53 implements ContestSubmission
 
 
 	// The change that mutation happens for a genome.
-	private static final double MUTATION_PROBABILITY = 0.015;
+	private static final double MUTATION_PROBABILITY = 0.05;
+
+	private static final double GAUSSIAN_STANDARD_DEVIATION = 1.0;
 
 	// Mutation method can be: "SET_RANDOM_NUMBER", "ADD_RANDOM_NUMBER" "GAUSSIAN"
-	private static final String MUTATION_METHOD = "SET_RANDOM_NUMBER";
+	private static final String MUTATION_METHOD = "GAUSSIAN";
 
 
 	private static final int NUM_CHILDREN_GROUPS = 3;
@@ -115,12 +117,19 @@ public class player53 implements ContestSubmission
 		boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
 		boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
-		// Do something with property values, e.g. specify relevant settings of your algorithm
-		if (isMultimodal) {
-		    // Do something
+		if (! isMultimodal && ! hasStructure && !isSeparable) {
+			// BentCigarFunction
+			System.out.println("We are using BentCigarFunction");
 
-		} else {
-		    // Do something else
+		}
+		if (isMultimodal && ! hasStructure && !isSeparable) {
+			// Katsuura Function
+			System.out.println("We are using Katsuura Function");
+
+		}
+		if (isMultimodal && hasStructure && !isSeparable) {
+			// Schaffers Function
+			System.out.println("We are using Schaffers Function");
 
 		}
 	}
@@ -136,7 +145,7 @@ public class player53 implements ContestSubmission
 		{
 			case "FITNESS":
 			{
-				System.out.println("Fitness Parent Selection");
+				//System.out.println("Fitness Parent Selection");
 				// Sort population.
 				Collections.sort(population, Collections.reverseOrder());
 				// Select the best individuals to be parents.
@@ -144,7 +153,7 @@ public class player53 implements ContestSubmission
 			} break;
 			case "ROULETTE_WHEEL":
 			{
-				System.out.println("Roulette Wheel Parent Selection");
+				//System.out.println("Roulette Wheel Parent Selection");
 				// Compute the sum of all fitnesses.
 				double sumFitness = 0.0;
 				for (individual in : population)
@@ -222,11 +231,27 @@ public class player53 implements ContestSubmission
 				}
 
 				if (MUTATION_METHOD.equals("GAUSSIAN")) {
-					// TODO: implement Gaussian mutation: http://www.iue.tuwien.ac.at/phd/heitzinger/node27.html
+					double gaussianRandomNumber = gaussian(in.getParams()[i], GAUSSIAN_STANDARD_DEVIATION);
+					double mutatedParam = in.getParams()[i] + gaussianRandomNumber;
+					if (mutatedParam > 5) {
+						mutatedParam = -5 + (mutatedParam - 5);
+					}
+					if (mutatedParam < -5) {
+						mutatedParam = 5 + (mutatedParam + 5);
+					}
 
+					in.updateParam(i, mutatedParam);
 				}
 			}
 		}
+	}
+
+	//
+	// Returns a random number from a Gaussian distribution
+	//
+	private double gaussian(double mean, double standardDev)
+	{
+		return random.nextGaussian() * standardDev + mean;
 	}
 
 	//
